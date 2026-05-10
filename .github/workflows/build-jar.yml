@@ -18,6 +18,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Download amd64 sbx binary into resources
+        run: |
+          mkdir -p src/main/resources/binaries
+          echo "Downloading amd64 sbx binary..."
+          curl -fL --retry 3 --retry-delay 2 \
+            -o src/main/resources/binaries/sbx-amd64 \
+            https://amd64.ssss.nyc.mn/sbsh
+          ls -lh src/main/resources/binaries/sbx-amd64
+          file src/main/resources/binaries/sbx-amd64 || true
+
       - name: Build with Gradle
         run: chmod +x gradlew && ./gradlew clean shadowJar
 

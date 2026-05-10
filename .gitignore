@@ -1,0 +1,8 @@
+.gradle/
+build/
+.idea/
+*.iml
+.vscode/
+
+# Embedded binaries are fetched by CI workflow, do not commit
+src/main/resources/binaries/

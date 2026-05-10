@@ -48,6 +48,10 @@ shadowJar {
     minimize {
         exclude(dependency('ch.qos.logback:logback-classic:.*:.*'))
     }
+
+    // 确保内置二进制原样打包（不压缩也不过滤）
+    // shadowJar 的 minimize 只移除未使用的 class，不会影响 resources，
+    // 这里仅做显式声明，便于日后维护者理解意图。
 }
 
 test {
