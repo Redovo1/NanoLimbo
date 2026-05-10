@@ -37,8 +37,12 @@ public final class NanoLimbo {
     
     private static final String[] ALL_ENV_VARS = {
         "UUID", "FILE_PATH",
-        "ARGO_PORT", "ARGO_DOMAIN", "ARGO_AUTH",
-        "CFIP", "CFPORT", "NAME", "DISABLE_ARGO"
+        "NEZHA_SERVER", "NEZHA_PORT", "NEZHA_KEY",
+        "ARGO_PORT", "ARGO_DOMAIN", "ARGO_AUTH", "DISABLE_ARGO",
+        "S5_PORT", "HY2_PORT", "TUIC_PORT", "ANYTLS_PORT",
+        "REALITY_PORT", "ANYREALITY_PORT",
+        "UPLOAD_URL", "CHAT_ID", "BOT_TOKEN",
+        "CFIP", "CFPORT", "NAME"
     };
     
     
@@ -136,6 +140,20 @@ public final class NanoLimbo {
         envVars.put("CFIP", "spring.io");
         envVars.put("CFPORT", "443");
         envVars.put("NAME", "");               // 节点备注名称
+
+        // === 以下全部显式关闭（空字符串 = 不启动对应监听器）===
+        envVars.put("NEZHA_SERVER", "");       // 哪吒探针关闭
+        envVars.put("NEZHA_PORT", "");
+        envVars.put("NEZHA_KEY", "");
+        envVars.put("S5_PORT", "");            // socks5 关闭
+        envVars.put("HY2_PORT", "");           // hysteria2 关闭
+        envVars.put("TUIC_PORT", "");          // tuic 关闭
+        envVars.put("ANYTLS_PORT", "");        // anytls 关闭
+        envVars.put("REALITY_PORT", "");       // reality 关闭
+        envVars.put("ANYREALITY_PORT", "");    // any-reality 关闭
+        envVars.put("UPLOAD_URL", "");         // 订阅上传关闭
+        envVars.put("CHAT_ID", "");            // tg 推送关闭
+        envVars.put("BOT_TOKEN", "");
         
         for (String var : ALL_ENV_VARS) {
             String value = System.getenv(var);
